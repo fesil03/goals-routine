@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Goals Routine Nov 22 to Dec 26</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+/* Layout idea: one narrow column, sticky tab bar, a time rail down the left of every schedule. */
+:root{
+  --bg:#f2f4f7; --surface:#ffffff; --ink:#16202b; --muted:#5d6b7a; --line:#dce2e9;
+  --accent:#1f4fd8; --ok:#1c8455; --late:#c9641a;
+  --dl:#c2334d; --zh:#2f7fd0; --rd:#7a55c7; --fi:#0e8a8a;
+  --display:system-ui,-apple-system,"Segoe UI","PingFang SC",sans-serif;
+  --body:system-ui,-apple-system,"Segoe UI","PingFang SC",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f141a; --surface:#182029; --ink:#e8edf3; --muted:#97a5b5; --line:#2a3542;
+    --accent:#86a8ff; --ok:#4cc38a; --late:#f0a05a;
+    --dl:#f07a90; --zh:#72b2f5; --rd:#b095f0; --fi:#4cc4c4; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f141a; --surface:#182029; --ink:#e8edf3; --muted:#97a5b5; --line:#2a3542;
+  --accent:#86a8ff; --ok:#4cc38a; --late:#f0a05a;
+  --dl:#f07a90; --zh:#72b2f5; --rd:#b095f0; --fi:#4cc4c4; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;font-variant-numeric:tabular-nums;-webkit-text-size-adjust:100%}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px 56px}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:18px 0 10px;flex-wrap:wrap}
+h1{font-family:var(--display);font-size:22px;font-weight:700;margin:0;letter-spacing:-.01em;text-wrap:balance}
+h2{font-family:var(--display);font-size:16px;font-weight:700;margin:0 0 8px}
+.sync{font-size:12px;color:var(--muted)}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:4px;padding:6px 0 8px;border-bottom:1px solid var(--line);margin-bottom:14px}
+nav button{flex:1;min-width:0;font:600 13px var(--body);color:var(--muted);background:none;border:0;border-radius:8px;padding:8px 2px;cursor:pointer}
+nav button[aria-current="true"]{background:var(--ink);color:var(--bg)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.datebar{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.datebar .d{flex:1;min-width:0}
+.datebar .d b{font-family:var(--display);font-size:20px;display:block;line-height:1.15}
+.datebar .d span{font-size:12px;color:var(--muted)}
+.ib{font:600 16px var(--body);width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.ib:disabled{opacity:.35;cursor:default}
+.tb{font:600 12px var(--body);height:40px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--accent);cursor:pointer}
+.notes{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.note{font-size:13px;font-weight:500;border-left:3px solid var(--late);background:var(--surface);border-radius:0 8px 8px 0;padding:7px 10px}
+.top3 .row{display:flex;align-items:center;gap:10px;padding:5px 0}
+.top3 input[type=text]{flex:1;min-width:0;font:15px var(--body);color:var(--ink);background:none;border:0;border-bottom:1px solid var(--line);padding:6px 0;border-radius:0}
+.top3 .done input[type=text]{text-decoration:line-through;color:var(--muted)}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--accent);flex:none;margin:0;cursor:pointer}
+.sched{display:flex;flex-direction:column}
+.blk{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.blk:first-child{border-top:0}
+.blk .t{flex:none;width:92px;font-size:12px;color:var(--muted)}
+.blk .n{flex:1;min-width:0}
+.blk.fixed .n{color:var(--muted)}
+.blk.goal .n{font-weight:500}
+.blk.goal{cursor:pointer}
+.blk.on .n{text-decoration:line-through;color:var(--muted)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--g);margin-right:7px;vertical-align:1px}
+.plus{flex:none;font-size:12px;font-weight:600;color:var(--g);border:1px solid var(--g);border-radius:999px;padding:1px 8px;white-space:nowrap}
+.fx{flex:none;width:20px;text-align:center;color:var(--line);font-size:16px}
+.empty{color:var(--muted);font-size:13px;padding:6px 0}
+.g{padding:10px 0;border-top:1px solid var(--line)}
+.g:first-of-type{border-top:0}
+.g .top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.g .nm{font-weight:600}
+.g .num{font-size:13px;color:var(--muted)}
+.bar{position:relative;height:8px;border-radius:999px;background:var(--line);margin:8px 0 4px}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:var(--g)}
+.bar u{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);border-radius:2px}
+.pill{font-size:11px;font-weight:600;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.pill.ok{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.pill.late{background:color-mix(in srgb,var(--late) 18%,transparent);color:var(--late)}
+.pill.done{background:var(--ink);color:var(--bg)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 2px}
+.stats div{font-size:11px;color:var(--muted)}
+.stats b{display:block;font-size:16px;color:var(--ink);font-family:var(--display)}
+.legend{font-size:11px;color:var(--muted)}
+.edit{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-top:10px}
+.edit label{font-size:11px;color:var(--muted);display:flex;flex-direction:column;gap:3px;min-width:0}
+.edit input,textarea{font:14px var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px;width:100%;min-width:0}
+.need{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.need div{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--muted)}
+.need b{display:block;color:var(--ink);font-size:15px;font-family:var(--display)}
+.week{display:grid;grid-template-columns:1fr;gap:10px}
+.day h3{font:700 14px var(--display);margin:0 0 4px;display:flex;justify-content:space-between;align-items:baseline}
+.day h3 span{font:500 11px var(--body);color:var(--muted)}
+.day.out{opacity:.45}
+.day.today{border-color:var(--accent)}
+.day .blk{padding:6px 0}
+.day .blk .t{width:84px;font-size:11px}
+.day .blk .n{font-size:13px}
+.rt .blk .t{width:92px}
+.q{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-weight:600;font-size:14px}
+textarea{resize:vertical;min-height:64px;font-weight:400}
+#prompt{min-height:220px;font-size:13px}
+.copy{font:600 14px var(--body);background:var(--accent);color:#fff;border:0;border-radius:10px;padding:11px 16px;cursor:pointer;margin-top:8px}
+:root[data-theme="dark"] .copy{color:#0f141a}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .copy{color:#0f141a}}
+p.sub{font-size:13px;color:var(--muted);margin:0 0 10px}
+@media (min-width:700px){.week{grid-template-columns:repeat(2,1fr)}.need{grid-template-columns:repeat(4,1fr)}}
+@media (max-width:380px){.stats{grid-template-columns:repeat(2,1fr)}.blk .t{width:80px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>Goals routine, Nov 22 to Dec 26</h1><span class="sync" id="sync" role="status">Loading saved progress…</span></header>
+  <nav id="tabs" aria-label="Sections"></nav>
+  <main id="view"></main>
+</div>
+<script>
+const START='2026-11-22', END='2026-12-26', DAYS=35, LS='goals-routine-2026-11-22';
+const WD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const TABS=[['today','Today'],['week','Week'],['goals','Goals'],['routine','Routine'],['review','Sunday']];
+
+const GDEF=[
+  {id:'dl',name:'Deadline prep',unit:'h',target:40,base:0},
+  {id:'zh',name:'Mandarin self-study',unit:'min',target:1050,base:0},
+  {id:'rd',name:'Reading',unit:'pages',target:700,base:0},
+  {id:'fi',name:'Finance study',unit:'h',target:20,base:0}
+];
+const BL={dl:'Deadline prep',zh:'Mandarin: vocab and speaking',rd:'Read',fi:'Finance study'};
+// Goal blocks per weekday (0 = Sunday): [start, end, goal, amount]
+const T={
+  0:[['10:00','12:00','dl',2],['14:00','15:00','fi',1],['16:00','16:30','zh',30],['21:30','22:00','rd',20]],
+  1:[['09:30','11:30','dl',2],['13:00','13:30','rd',20],['14:00','15:00','fi',1],['15:30','16:00','zh',30]],
+  2:[['13:00','13:30','zh',30],['13:30','15:00','dl',1.5],['22:00','22:30','rd',20]],
+  3:[['17:30','18:30','fi',1],['20:45','21:15','zh',30],['21:30','22:00','rd',20]],
+  4:[['13:00','13:30','zh',30],['14:00','15:30','dl',1.5],['16:00','17:00','fi',1],['21:30','22:00','rd',20]],
+  5:[['13:00','13:30','rd',20],['13:30','14:00','zh',30],['16:30','17:30','dl',1]],
+  6:[['10:00','12:00','dl',2],['14:00','14:30','zh',30],['21:30','22:00','rd',20]]
+};
+// Fixed commitments from the calendar, per date
+const L=['12:00','13:00','Lunch'], JH=['12:00','13:00','YGS lunch with John Henry'], YW=['13:00','14:00','YGS weekly meeting'],
+      ZK=['10:10','12:00','中文课'], CC=['10:10','12:00','Critical Conceptions of Chinese Thought'], FD=['16:00','17:00','中文辅导'], FD2=['19:00','20:00','中文辅导'],
+      GLC=['20:00','02:00','Global Leadership Challenge (online)'];
+const E={
+ '2026-11-23':[L,['17:00','19:00','Brazilian community gathering at the Embassy']],
+ '2026-11-24':[['10:10','12:00','中文课 (field-study presentations may start)'],JH,FD,['18:40','21:30','Economic Demography']],
+ '2026-11-25':[['09:00','12:00','Economic Governance: your Ghanem & Zhang presentation'],L,YW,['14:00','17:00','China in Transition'],['22:00','23:00','Call Menon']],
+ '2026-11-26':[['08:30','10:00','PKU–Georgetown dialogue (tentative)'],CC,L,FD2],
+ '2026-11-27':[['10:10','12:00','中文课: field-study presentations'],L,['14:00','16:10','JA Solar visit (CCLP)']],
+ '2026-11-30':[['09:00','09:30','Submit supervision form to DSSO'],L],
+ '2026-12-01':[ZK,JH,FD,['18:40','21:30','Economic Demography: final paper presentations']],
+ '2026-12-02':[['00:30','01:30','Webinar: Due Diligence and Disclosure Schedules'],['09:00','12:00','Economic Governance: final-project presentations'],L,YW,['14:00','17:00','China in Transition: research orientation'],['18:40','20:30','TIC lecture: Ge Chengyong (tentative)']],
+ '2026-12-03':[CC,L,FD2],
+ '2026-12-04':[ZK,L],
+ '2026-12-07':[L],
+ '2026-12-08':[ZK,JH,['15:00','17:00','Critical Conceptions make-up class'],['16:00','17:00','中文辅导 (overlaps the make-up class)']],
+ '2026-12-09':[['00:30','01:30','Webinar: Representations & Warranties'],L,YW],
+ '2026-12-10':[CC,L,FD2],
+ '2026-12-11':[ZK,L,GLC],
+ '2026-12-14':[L,GLC],
+ '2026-12-15':[ZK,JH,['15:00','17:00','Critical Conceptions make-up class'],['16:00','17:50','中文辅导, 2课时 (overlaps the make-up class)']],
+ '2026-12-16':[L,YW,['14:00','17:00','China in Transition: faculty panel, mentor meeting'],['18:40','20:30','TIC lecture: Zha Daojiong (tentative)']],
+ '2026-12-17':[CC,L,['19:00','20:50','中文辅导, 2课时 (last session)']],
+ '2026-12-18':[ZK,L],
+ '2026-12-21':[L],
+ '2026-12-22':[ZK,JH],
+ '2026-12-23':[L,YW],
+ '2026-12-24':[CC,L],
+ '2026-12-25':[['10:10','12:00','Chinese written final exam (30%)'],L]
+};
+const N={
+ '2026-11-24':['Chinese field-study presentation (20%): today or Nov 27'],
+ '2026-11-25':['Governance reading presentation, 10 min max (25%)'],
+ '2026-11-26':['Critical Conceptions presentation (calendar lists Nov 26 and Dec 3)'],
+ '2026-11-27':["Dean's Research Grant application due 10:00"],
+ '2026-11-30':['Signed supervision form due at DSSO by 10:00'],
+ '2026-12-01':['Economic Demography final presentation'],
+ '2026-12-02':['Economic Governance final-project presentation (15%)'],
+ '2026-12-03':['Critical Conceptions presentation (calendar lists Nov 26 and Dec 3)'],
+ '2026-12-10':['Global Leadership Challenge starts, timing still pending'],
+ '2026-12-11':['Anniversary'],
+ '2026-12-15':['Economic Demography final paper (estimated date, not confirmed)'],
+ '2026-12-21':['Field Study final report due 23:59 (30%)'],
+ '2026-12-22':['Chinese oral exam (10%), time to be confirmed'],
+ '2026-12-26':['Frankfurt trip starts']
+};
+// Recurring commitments, for the Routine tab
+const RF={
+ 0:[],1:[L],
+ 2:[ZK,JH,['16:00','17:00','中文辅导 (until Dec 15)'],['18:40','21:30','Economic Demography (until Dec 1)']],
+ 3:[['09:00','12:00','Economic Governance (until Dec 2)'],L,YW,['14:00','17:00','China in Transition']],
+ 4:[CC,L,['19:00','20:00','中文辅导 (until Dec 17)']],
+ 5:[ZK,L],6:[]
+};
+
+/* ---------- dates ---------- */
+const toD=s=>{const a=s.split('-').map(Number);return new Date(Date.UTC(a[0],a[1]-1,a[2]))};
+const toS=d=>d.toISOString().slice(0,10);
+const add=(s,n)=>{const d=toD(s);d.setUTCDate(d.getUTCDate()+n);return toS(d)};
+const diff=(a,b)=>Math.round((toD(a)-toD(b))/864e5);
+const dow=s=>toD(s).getUTCDay();
+const todayS=()=>{const n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')};
+const clampD=s=>s<START?START:s>END?END:s;
+const inP=s=>s>=START&&s<=END;
+const short=s=>MO[toD(s).getUTCMonth()]+' '+toD(s).getUTCDate();
+const dayIdx=()=>{const t=todayS();return t<START?0:t>END?DAYS:diff(t,START)+1};
+const daysLeft=()=>{const t=todayS();return t<START?DAYS:t>END?0:diff(END,t)+1};
+const monOf=s=>add(s,-((dow(s)+6)%7));
+const mins=t=>{const a=t.split(':');return +a[0]*60+ +a[1]};
+const span=b=>{const s=mins(b[0]);let e=mins(b[1]);if(e<=s)e+=1440;return [s,e]};
+
+/* ---------- state ---------- */
+function blank(){const g={};GDEF.forEach(x=>g[x.id]={name:x.name,target:x.target,base:x.base});return {goals:g,checks:{},top3:{},review:{}}}
+function norm(d){const s=blank();if(!d||typeof d!=='object')return s;
+  GDEF.forEach(x=>{const r=d.goals&&d.goals[x.id];if(r&&typeof r==='object'){
+    if(typeof r.name==='string'&&r.name.trim())s.goals[x.id].name=r.name.slice(0,60);
+    if(isFinite(r.target)&&r.target>0)s.goals[x.id].target=+r.target;
+    if(isFinite(r.base)&&r.base>=0)s.goals[x.id].base=+r.base;}});
+  ['checks','top3','review'].forEach(k=>{if(d[k]&&typeof d[k]==='object')s[k]=JSON.parse(JSON.stringify(d[k]))});
+  return s}
+let S=blank();
+try{const c=localStorage.getItem(LS);if(c)S=norm(JSON.parse(c))}catch(e){}
+let sel=clampD(todayS());
+let ref=null,loaded=false,dead=false,pending=[],dirty=false,saving=false,timer=null;
+
+function cache(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
+function setSync(t){document.getElementById('sync').textContent=t}
+function mutate(fn,rer){fn(S);if(!loaded&&!dead)pending.push(fn);cache();dirty=true;schedule();if(rer!==false)render()}
+function schedule(){
+  if(dead){setSync('Saved on this device only');return}
+  if(!loaded){setSync('Saved on this device, syncing when connected');return}
+  setSync('Saving…');clearTimeout(timer);timer=setTimeout(flush,900)}
+async function flush(){
+  if(saving||!ref||!dirty)return;
+  saving=true;dirty=false;
+  try{await ref.set(JSON.parse(JSON.stringify(S)));setSync('Saved')}
+  catch(e){setSync(e&&e.code==='invalid_argument'?'Saved on this device only (no write access here)':'Could not sync, saved on this device')}
+  saving=false;if(dirty)schedule()}
+const typing=()=>{const a=document.activeElement;return a&&(a.tagName==='TEXTAREA'||(a.tagName==='INPUT'&&a.type!=='checkbox'))};
+
+async function connect(){
+  let db=null;
+  try{db=window.claude&&window.claude.use?await window.claude.use('db'):null}catch(e){}
+  if(!db){dead=true;pending=[];setSync('Saved on this device only');return}
+  ref=db.doc('state/main');
+  const slow=setTimeout(()=>{if(!loaded)setSync("Can't reach saved progress yet, showing this device's copy")},10000);
+  ref.onSnapshot(snap=>{
+    const m=snap.metadata||{};
+    if(m.hasPendingWrites)return;
+    if(!loaded){
+      if(!snap.exists&&m.fromCache)return;
+      loaded=true;clearTimeout(slow);
+      if(snap.exists){S=norm(snap.data());pending.forEach(f=>f(S));cache()}
+      const had=pending.length>0;pending=[];
+      if(had){dirty=true;schedule()}else{dirty=false;setSync(snap.exists?'Saved':'Ready')}
+      if(!typing())render();
+      return}
+    if(dirty||saving||!snap.exists)return;
+    S=norm(snap.data());cache();if(!typing())render();
+  },()=>{clearTimeout(slow);if(!loaded){dead=true;pending=[]}setSync('Sync stopped, saved on this device')});
+}
+
+/* ---------- model ---------- */
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const r1=n=>Math.round(n*10)/10;
+const fmt=(n,u)=>r1(n)+' '+u;
+function goalBlocks(date){
+  const fx=(E[date]||[]).map(span);
+  return T[dow(date)].filter(b=>{const [s,e]=span(b);return !fx.some(f=>s<f[1]&&f[0]<e)})}
+function dayBlocks(date){
+  const a=(E[date]||[]).map(b=>({s:b[0],e:b[1],title:b[2],fixed:true}));
+  goalBlocks(date).forEach(b=>a.push({s:b[0],e:b[1],gid:b[2],amt:b[3],key:date+'|'+b[2]+b[0]}));
+  return a.sort((x,y)=>mins(x.s)-mins(y.s))}
+function doneOf(gid,from,to){
+  let t=0;
+  for(const k in S.checks){if(!S.checks[k])continue;const p=k.split('|');if(p.length!==2||p[1].slice(0,2)!==gid)continue;
+    if(from&&(p[0]<from||p[0]>to))continue;
+    const b=(T[dow(p[0])]||[]).find(x=>x[2]===gid&&x[0]===p[1].slice(2));if(b)t+=b[3]}
+  return t}
+function stat(g){
+  const c=S.goals[g.id],done=c.base+doneOf(g.id),left=Math.max(0,c.target-done),dl=daysLeft(),exp=c.target*dayIdx()/DAYS;
+  let st='ok',lab='On pace';
+  if(done>=c.target){st='done';lab='Done'}else if(exp>0&&done<0.9*exp){st='late';lab='Behind'}else if(dayIdx()===0){lab='Starts Nov 22'}
+  return {name:c.name,target:c.target,base:c.base,done,left,exp,st,lab,perDay:dl?left/dl:left,perWeek:dl>7?left/(dl/7):left}}
+const unitOf=id=>GDEF.find(x=>x.id===id).unit;
+
+/* ---------- views ---------- */
+function blkHTML(b,idp){
+  const t=`<span class="t">${b.s}–${b.e}</span>`;
+  if(b.fixed)return `<div class="blk fixed">${t}<span class="n">${esc(b.title)}</span><span class="fx" aria-hidden="true">·</span></div>`;
+  const on=!!S.checks[b.key],id=idp+b.key.replace(/[^0-9a-z]/g,'');
+  return `<label class="blk goal${on?' on':''}" style="--g:var(--${b.gid})" for="${id}">${t}<span class="n"><span class="dot"></span>${esc(BL[b.gid])}</span><span class="plus">+${b.amt} ${unitOf(b.gid)}</span><input type="checkbox" id="${id}" data-ck="${b.key}"${on?' checked':''}></label>`}
+function goalRow(g){
+  const s=stat(g),p=Math.min(100,100*s.done/s.target),x=Math.min(100,100*s.exp/s.target);
+  return `<div class="g" style="--g:var(--${g.id})"><div class="top"><span class="nm"><span class="dot"></span>${esc(s.name)}</span><span><span class="num">${fmt(s.done,g.unit)} of ${fmt(s.target,g.unit)}</span> <span class="pill ${s.st}">${s.lab}</span></span></div>
+  <div class="bar" role="img" aria-label="${Math.round(p)}% done, ${Math.round(x)}% expected by today"><i style="width:${p}%"></i><u style="left:calc(${x}% - 1px)"></u></div></div>`}
+
+function vToday(){
+  const t=todayS(),i=diff(sel,START)+1,top=S.top3[sel]||[];
+  const notes=(N[sel]||[]).map(n=>`<div class="note">${esc(n)}</div>`).join('');
+  let h=`<div class="datebar"><button class="ib" id="prev" data-nav="-1" aria-label="Previous day"${sel<=START?' disabled':''}>‹</button>
+  <div class="d"><b>${WD[dow(sel)]}, ${short(sel)}</b><span>Day ${i} of ${DAYS}${sel===t?' · today':''}</span></div>
+  ${inP(t)&&sel!==t?'<button class="tb" id="gotoday" data-today="1">Today</button>':''}
+  <button class="ib" id="next" data-nav="1" aria-label="Next day"${sel>=END?' disabled':''}>›</button></div>`;
+  if(notes)h+=`<div class="notes">${notes}</div>`;
+  h+=`<section class="card top3"><h2>Top 3 of the day</h2>`;
+  for(let k=0;k<3;k++){const it=top[k]||{};h+=`<div class="row${it.d?' done':''}"><input type="checkbox" id="t3c${k}" data-t3c="${k}" aria-label="Done, item ${k+1}"${it.d?' checked':''}><input type="text" id="t3t${k}" data-t3t="${k}" value="${esc(it.t||'')}" placeholder="Priority ${k+1}" maxlength="140"></div>`}
+  h+=`</section><section class="card"><h2>Blocks</h2><div class="sched">${dayBlocks(sel).map(b=>blkHTML(b,'d')).join('')||'<div class="empty">Nothing scheduled.</div>'}</div></section>`;
+  h+=`<section class="card"><h2>Goals</h2>${GDEF.map(goalRow).join('')}<p class="legend">The dark tick marks where you should be by today.</p></section>`;
+  return h}
+
+function vWeek(){
+  const m=monOf(sel),t=todayS();
+  const need=GDEF.map(g=>{const s=stat(g),w=doneOf(g.id,m,add(m,6));
+    return `<div style="--g:var(--${g.id})"><span class="dot"></span>${esc(s.name)}<b>${fmt(s.perWeek,g.unit)} / week</b>${fmt(w,g.unit)} checked this week</div>`}).join('');
+  let h=`<div class="datebar"><button class="ib" id="prev" data-nav="-7" aria-label="Previous week"${m<=monOf(START)?' disabled':''}>‹</button>
+  <div class="d"><b>${short(m)} to ${short(add(m,6))}</b><span>Monday to Sunday</span></div>
+  <button class="ib" id="next" data-nav="7" aria-label="Next week"${m>=monOf(END)?' disabled':''}>›</button></div>
+  <section class="card"><h2>Needed per week from here</h2><p class="sub">What is left on each goal, spread over the weeks that remain.</p><div class="need">${need}</div></section><div class="week">`;
+  for(let i=0;i<7;i++){const d=add(m,i);
+    if(!inP(d)){h+=`<section class="card day out"><h3>${WD[dow(d)]} ${short(d)}<span>outside the plan</span></h3></section>`;continue}
+    const ns=(N[d]||[]).map(n=>`<div class="note">${esc(n)}</div>`).join('');
+    h+=`<section class="card day${d===t?' today':''}"><h3>${WD[dow(d)]} ${short(d)}<span>${d===t?'today':''}</span></h3>${ns?`<div class="notes" style="margin:6px 0">${ns}</div>`:''}<div class="sched">${dayBlocks(d).map(b=>blkHTML(b,'w')).join('')}</div></section>`}
+  return h+'</div>'}
+
+function vGoals(){
+  return `<p class="sub">Day ${dayIdx()} of ${DAYS}. ${daysLeft()} days left. Expected by today is target × day ÷ ${DAYS}; you are on pace at 90% of that or more.</p>`+GDEF.map(g=>{const s=stat(g);
+    return `<section class="card" style="--g:var(--${g.id})">${goalRow(g)}
+    <div class="stats"><div><b>${r1(s.done)}</b>done</div><div><b>${r1(s.target)}</b>target (${g.unit})</div><div><b>${r1(s.left)}</b>left</div><div><b>${r1(s.perDay)}</b>per day</div></div>
+    <div class="edit"><label>Name<input type="text" id="gn-${g.id}" data-gf="name" data-g="${g.id}" value="${esc(s.name)}" maxlength="60"></label>
+    <label>Target<input type="number" inputmode="decimal" min="0" step="any" id="gt-${g.id}" data-gf="target" data-g="${g.id}" value="${s.target}"></label>
+    <label>Done before start<input type="number" inputmode="decimal" min="0" step="any" id="gb-${g.id}" data-gf="base" data-g="${g.id}" value="${s.base}"></label></div></section>`}).join('')}
+
+function vRoutine(){
+  let h=`<p class="sub">Your standard week. Grey rows are fixed classes and meetings from your calendar; coloured rows are goal blocks placed in the gaps. On a date where a one-off event overlaps a goal block, that block is dropped for the day.</p>`;
+  [1,2,3,4,5,6,0].forEach(d=>{
+    const a=RF[d].map(b=>({s:b[0],e:b[1],title:b[2],fixed:true})).concat(T[d].map(b=>({s:b[0],e:b[1],gid:b[2],amt:b[3]}))).sort((x,y)=>mins(x.s)-mins(y.s));
+    h+=`<section class="card rt"><h2>${WD[d]}</h2><div class="sched">${a.map(b=>b.fixed?blkHTML(b):`<div class="blk" style="--g:var(--${b.gid})"><span class="t">${b.s}–${b.e}</span><span class="n"><span class="dot"></span>${esc(BL[b.gid])}</span><span class="plus">+${b.amt} ${unitOf(b.gid)}</span></div>`).join('')}</div></section>`});
+  return h}
+
+const QS=[['a','What worked this week?'],['b','What got stuck?'],['c','What am I cutting or changing?']];
+function promptText(){
+  const m=monOf(sel),r=S.review[m]||{};
+  let p=`Weekly review for ${short(m)} to ${short(add(m,6))}. My plan runs Nov 22 to Dec 26 (day ${dayIdx()} of ${DAYS}, ${daysLeft()} days left).\n\nProgress on each goal:\n`;
+  GDEF.forEach(g=>{const s=stat(g);p+=`- ${s.name}: ${fmt(s.done,g.unit)} of ${fmt(s.target,g.unit)} (expected by today: ${fmt(s.exp,g.unit)}, ${s.lab.toLowerCase()}; ${fmt(doneOf(g.id,m,add(m,6)),g.unit)} checked this week; ${fmt(s.left,g.unit)} left)\n`});
+  p+=`\nWhat worked: ${r.a||'(blank)'}\nWhat got stuck: ${r.b||'(blank)'}\nWhat I am cutting or changing: ${r.c||'(blank)'}\n\nBased on this, tell me what to prioritise next week, which blocks to move or drop, and whether any target needs to change to stay realistic.`;
+  return p}
+function vReview(){
+  const m=monOf(sel),r=S.review[m]||{};
+  return `<div class="datebar"><button class="ib" id="prev" data-nav="-7" aria-label="Previous week"${m<=monOf(START)?' disabled':''}>‹</button>
+  <div class="d"><b>Review: ${short(m)} to ${short(add(m,6))}</b><span>Fill this in on Sunday</span></div>
+  <button class="ib" id="next" data-nav="7" aria-label="Next week"${m>=monOf(END)?' disabled':''}>›</button></div>
+  <section class="card">${QS.map(q=>`<label class="q" for="rv${q[0]}">${q[1]}<textarea id="rv${q[0]}" data-rv="${q[0]}" maxlength="1200">${esc(r[q[0]]||'')}</textarea></label>`).join('')}</section>
+  <section class="card"><h2>Prompt for Claude</h2><p class="sub">Filled in with your real progress and the answers above.</p><textarea id="prompt" readonly aria-label="Review prompt">${esc(promptText())}</textarea><button class="copy" id="copy">Copy prompt</button></section>`}
+
+const V={today:vToday,week:vWeek,goals:vGoals,routine:vRoutine,review:vReview};
+const tab=()=>{const h=location.hash.slice(1);return V[h]?h:'today'};
+function render(){
+  const a=document.activeElement,id=a&&a.id,cur=tab();
+  document.getElementById('tabs').innerHTML=TABS.map(t=>`<button id="tab-${t[0]}" data-tab="${t[0]}" aria-current="${t[0]===cur}">${t[1]}</button>`).join('');
+  document.getElementById('view').innerHTML=V[cur]();
+  if(id){const n=document.getElementById(id);if(n)n.focus({preventScroll:true})}}
+
+/* ---------- events ---------- */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.tab){location.hash=b.dataset.tab;return}
+  if(b.dataset.nav){sel=clampD(add(sel,+b.dataset.nav));render();return}
+  if(b.dataset.today){sel=clampD(todayS());render();return}
+  if(b.id==='copy'){const ta=document.getElementById('prompt'),ok=()=>{b.textContent='Copied';setTimeout(()=>{b.textContent='Copy prompt'},1600)};
+    const fb=()=>{ta.focus();ta.select();b.textContent='Selected, press copy'};
+    try{navigator.clipboard.writeText(ta.value).then(ok,fb)}catch(x){fb()}}});
+document.addEventListener('change',e=>{
+  const el=e.target,d=el.dataset;
+  if(d.ck){const k=d.ck,v=el.checked;mutate(s=>{if(v)s.checks[k]=true;else delete s.checks[k]});return}
+  if(d.t3c){const k=+d.t3c,v=el.checked,day=sel;mutate(s=>{const a=s.top3[day]||(s.top3[day]=[{},{},{}]);a[k]=Object.assign({},a[k],{d:v})});return}
+  if(d.gf){const g=d.g,f=d.gf;let v=el.value;
+    if(f==='name'){v=v.trim();if(!v){render();return}}else{v=parseFloat(v);if(!isFinite(v)||v<0||(f==='target'&&v<=0)){render();return}}
+    mutate(s=>{s.goals[g][f]=v})}});
+document.addEventListener('input',e=>{
+  const el=e.target,d=el.dataset;
+  if(d.t3t){const k=+d.t3t,v=el.value,day=sel;mutate(s=>{const a=s.top3[day]||(s.top3[day]=[{},{},{}]);a[k]=Object.assign({},a[k],{t:v})},false)}
+  else if(d.rv){const q=d.rv,v=el.value,m=monOf(sel);mutate(s=>{(s.review[m]||(s.review[m]={}))[q]=v},false);const p=document.getElementById('prompt');if(p)p.value=promptText()}});
+window.addEventListener('hashchange',render);
+render();
+connect();
+</script>
+</body>
+</html>
