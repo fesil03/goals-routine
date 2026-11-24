@@ -1,3 +1,3 @@
 # Goals routine
 
-Personal goals and routine dashboard, Nov 22 to Dec 26, 2026. Single static page, no external requests; progress is stored in the browser (localStorage).
+Retired on 2026-11-24. The planner now lives as a Claude artifact. The last version of the site is in commit d487343.
